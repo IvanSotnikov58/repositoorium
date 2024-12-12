@@ -3,3 +3,5 @@ GitHub võimaldab arendajatel ja meeskondadel projektidega tõhusalt töötada, 
 Seda platvormi kasutavad programmeerijad ja tarkvaraarendajad.
 Saate kasutada GitHubi isikliku portfelli loomiseks, oma projekte ja oskusi potentsiaalsetele tööandjatele tutvustamiseks ning meeskonnatarkvara arenduses osalemiseks. 
 Lisaks on GitHub kasulik avatud lähtekoodiga töötamiseks.
+GitHubi asutasid 2008. aastal Tom Preston-Werner, Chris Vanomstraet, PJ Hiett ja Scott Ciaccon. 
+Teenus sai avalikult kättesaadavaks 10. aprillil 2008.
