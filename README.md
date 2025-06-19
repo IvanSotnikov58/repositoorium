@@ -1,1 +1,1 @@
-# repositoorium
+See fail implementeerib Tkinterit kasutava veebikooli. Valida on kolme kooli vahel. Igal koolil on oma õpetajad ja erinevad testid. Pärast kooli valimist peate registreeruma või sisse logima olemasoleva õpilase kontole. Peate sisestama oma nime ja isikukoodi. Seejärel avaneb peaportaal, kus näete oma kahe testi hindeid ja kursuse keskmist hinnet. Seal saate teste teha. Test annab küsimuse ja kolm vastusevarianti. Peaportaalis näete ka õpilaste kohta käivat teavet (mis genereeritakse juhuslikult, kui neid pole). Seal näete nende nime, hindeid ja isikukoodi.
