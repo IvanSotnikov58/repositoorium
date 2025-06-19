@@ -86,33 +86,37 @@ SCHOOL_SUBJECTS = { # Словарь с предметами, учителями
 В этом классе реализованы методы для сдачи предметов,
 отоброжения вопросов в тестах и получения ответа
 '''
-class Student:# Класс для представления студента и его оценок
+class Student:
+    '''Класс для представления студента и его оценок'''
     def __init__(self, name, code):
         self.name = name
-        self.code = code# Код студента (для аутентификации)
+        self.code = code
         self.grades = {}  # Словарь с оценками: ключ - предмет, значение - список оценок за тесты
 
-# Метод сдачи предмета (проходит тесты по предмету и сохраняет оценки)
+
     def pass_subject(self, subject, subject_data):
+        '''Метод сдачи предмета (проходит тесты по предмету и сохраняет оценки)'''
         scores = []# Список оценок за тесты предмета
-        for test in subject_data["tests"]: # Проходим по всем тестам предмета
-            answer = self.ask_question(test)# Задаем вопрос и получаем ответ студента
+        for test in subject_data["tests"]:
+            answer = self.ask_question(test)
             if answer == test["answer"]:
                 scores.append(5)
             else:
                 scores.append(2)
         self.grades[subject] = scores
         return scores
-    # Метод отображения вопроса и получения ответа
+    
     def ask_question(self, test):
-        qwin = tk.Toplevel()# Создаем новое всплывающее окно с вопросом
-        qwin.title("Вопрос")# Заголовок окна
+        '''Метод отображения вопроса и получения ответа'''
+        qwin = tk.Toplevel()
+        qwin.title("Вопрос")
 
 
         var = tk.StringVar()# хранениe выбранного ответа
         result = []
 
-        def submit():# Функция отправки выбранного варианта и закрытия окна
+        def submit():
+            '''Функция отправки выбранного варианта и закрытия окна'''
             result.append(var.get())# Добавляем выбранный ответ в result
             qwin.destroy()
 
@@ -121,8 +125,8 @@ class Student:# Класс для представления студента и
             tk.Radiobutton(qwin, text=opt, variable=var, value=opt).pack(anchor="w")
 
         tk.Button(qwin, text="Ответить", command=submit).pack(pady=10)
-        qwin.grab_set()# Блокируем другие окна пока этот открыт
-        qwin.wait_window()# Ожидаем закрытия окна
+        qwin.grab_set()
+        qwin.wait_window()
         return result[0] if result else ""# Возвращаем выбранный ответ или пустую строку
 
 
@@ -133,43 +137,45 @@ class Student:# Класс для представления студента и
 регистрации нового студента, сохранения всех студентов в файл, 
 и аутентификации студента
 '''
-class SchoolManager:# Класс для управления школой (учениками и предметами)
+class SchoolManager:
+    '''Класс для управления школой (учениками и предметами)'''
     def __init__(self, school_name):
         self.school_name = school_name
         self.filename = f"students_{school_name.replace(' ', '_').lower()}.txt"
-        self.subjects = SCHOOL_SUBJECTS[school_name]  # Сначала инициализируем subjects
-        self.students = self.load_students()          # Затем загружаем студентов
+        self.subjects = SCHOOL_SUBJECTS[school_name]  
+        self.students = self.load_students()          
 
-    # Метод загрузки студентов из файла
+    
     def load_students(self):
+        '''Метод загрузки студентов из файла'''
         students = {}
         # Если файл не существует, то создаётся новый с рандомно сгенерированными учениками.
         if not os.path.exists(self.filename):
-            # Общие списки имён и фамилий
+            
             first_names_male   = ["Алексей", "Дмитрий", "Иван", "Егор", "Кирилл", "Максим", "Роман", "Павел", "Сергей", "Никита", "Кирило", "Артём", "Сава", "Андрей", "Егор", "Матвей", "Тимур", "Павел", "Георгий", "Виктор", "Фёдор", "Юрий", "Лев", "Владимир"]
             first_names_female = ["Виктория", "Анна", "Мария", "Полина", "Екатерина", "Ольга", "Елена", "Светлана", "Юлия", "Алина", "Аня"]
             last_names_male    = ["Смирнов", "Кузнецов", "Лебедев", "Козлов", "Попович", "Морозов", "Павлов", "Волков", "Соколов", "Гагаринко", "Бутов", "Агартов", "Васильев", "Зайцев", "Павлов"]
             last_names_female  = ["Антонова", "Белова", "Воронова", "Громова", "Давыдова", "Егорова", "Жукова", "Зиновьева", "Исаева", "Кириллова", "Ларина", "Малышева", "Николаева", "Орлова", "Рябова"]
 
-            # Составляем пары
+            
             male_combos   = [f"{fn} {ln}" for fn in first_names_male   for ln in last_names_male]
             female_combos = [f"{fn} {ln}" for fn in first_names_female for ln in last_names_female]
 
-            # Выбираем по 5 уникальных мужчин и женщин
+            
             selected = random.sample(male_combos, 5) + random.sample(female_combos, 5)
             random.shuffle(selected)
             # Добавляем сгенерированные имена в файл для школы
-            with open(self.filename, "w", encoding="utf-8") as f: # Кодировка утф чтобы пропускало кириллицу
+            with open(self.filename, "w", encoding="utf-8") as f: 
                 for full_name in selected:
-                    code = str(random.randint(10000000, 99999999))  # 8-значный код
+                    code = str(random.randint(10000000, 99999999))  
 
                     grades_parts = []# Временный список для хранения строк с оценками для записи в файл
                     grades_dict  = {}# Сgrades_dictловарь для оценок. Используется далее
-                    for subject in self.subjects:#Рандомные оценки за тесты.
+                    for subject in self.subjects:
                         t1  = random.randint(2, 5)
                         t2  = random.randint(2, 5)
                         avg = (t1 + t2) // 2
-                        grades_parts.append(f"{subject}:{t1},{t2},{avg}")# Входят: оценки за 2 теста и средняя за курс
+                        grades_parts.append(f"{subject}:{t1},{t2},{avg}")
                         grades_dict[subject] = [t1, t2]
                     
                     grades_str = "|".join(grades_parts)
@@ -198,16 +204,18 @@ class SchoolManager:# Класс для управления школой (уч�
 
 
 
-    # Метод регистрации нового студента
+    
     def register_student(self, name, code):
+        '''Метод регистрации нового студента'''
         if name in self.students:# Проверяем, что имя студента ещё не занято
             return False
         self.students[name] = {"code": code, "grades": {}}
         self.save_students()
         return True
 
-    # Метод сохранения всех студентов в файл
+    
     def save_students(self):
+        '''Метод сохранения всех студентов в файл'''
         with open(self.filename, "w", encoding="utf-8") as f:
             for name, data in self.students.items():
                 line = f"{name};{data['code']}"
@@ -220,8 +228,9 @@ class SchoolManager:# Класс для управления школой (уч�
                     line += ";" + "|".join(grades_part)
                 f.write(line + "\n")
 
-    # Метод аутентификации студента (проверка имени и кода)
+    
     def authenticate(self, name, code):
+        '''Метод аутентификации студента (проверка имени и кода)'''
         student = self.students.get(name)
         return student and student["code"] == code
 
@@ -231,26 +240,27 @@ class SchoolManager:# Класс для управления школой (уч�
 регистрации, входа, открытие главного "портала",
 и методы для детального просмотра информации о учениках 
 '''
-class MainApp: # Главный класс приложения
+class MainApp:
+    '''Главный класс приложения'''
     def __init__(self, root):
         self.root = root # Сохраняем ссылку на главное окно Tkinter
         self.root.title("Электронная школа")
-        self.root.geometry("400x300") # Устанавливаем размер главного окна
-        self.root.minsize(400, 300) # Минимальный размер
+        self.root.geometry("400x300") 
+        self.root.minsize(400, 300) 
         self.selected_school = tk.StringVar()# Создаем Tkinter-переменную для хранения выбранной школы
         self.school_manager = None
         self.student = None
         self.build_ui()
 
     def build_ui(self):
-        # Метод для построения интерфейса
-        school_frame = tk.LabelFrame(self.root, text="Выбор школы")# Создаем окно с заголовком "Выбор школы"
+        '''Метод для построения интерфейса'''
+        school_frame = tk.LabelFrame(self.root, text="Выбор школы")
         school_frame.pack(fill="x", padx=10, pady=10)
 
         for school in SCHOOLS: # Создаем радиокнопки для каждой школы из списка SCHOOLS
             tk.Radiobutton(
                 school_frame,
-                text=school, # Отображаемый текст
+                text=school, 
                 variable=self.selected_school,
                 value=school # Значение, которое будет присвоено переменной при выборе
             ).pack(anchor="w", padx=5, pady=2)
@@ -261,10 +271,10 @@ class MainApp: # Главный класс приложения
 
         tk.Label(login_frame, text="Имя:").grid(row=0, column=0, sticky="e", padx=5, pady=5)
         tk.Label(login_frame, text="Код:").grid(row=1, column=0, sticky="e", padx=5, pady=5)
-        # Создаем поле вводa
+        # поле вводa
         self.entry_name = tk.Entry(login_frame, width=30)
         self.entry_code = tk.Entry(login_frame, width=30)
-        # Размещаем поле ввод
+        
         self.entry_name.grid(row=0, column=1, padx=5, pady=5)
         self.entry_code.grid(row=1, column=1, padx=5, pady=5)
 
@@ -292,7 +302,7 @@ class MainApp: # Главный класс приложения
         # Проверяем все остальные школы
         for other in SCHOOLS:
             if other == school: continue # Пропускаем текущую выбранную школу
-            fn = f"students_{other.replace(' ', '_').lower()}.txt" # Формируем имя файла для другой школы
+            fn = f"students_{other.replace(' ', '_').lower()}.txt" 
             if os.path.exists(fn): # Если файл существует, проверяем наличие имени в нем
                 with open(fn, "r", encoding="utf-8") as f:
                     for line in f:# Если имя найдено в файле другой школы
@@ -301,13 +311,13 @@ class MainApp: # Главный класс приложения
                                 f"Пользователь {name} уже зарегистрирован в школе «{other}».")
                             return
 
-        # Если все проверки пройдены, создаем менеджер для выбранной школы
+        
         self.school_manager = SchoolManager(school)
         if self.school_manager.register_student(name, code):
             self.student = Student(name, code)
             messagebox.showinfo("Успех", "Вы зарегистрированы!")
-            self.root.withdraw()#Закрывается окно с регистрацией/входом
-            self.open_portal()#Открывается главное окно  
+            self.root.withdraw()#Закрывается окно с регистрацией/входом и открывается главное окно 
+            self.open_portal() 
         else:
             messagebox.showerror("Ошибка", "Имя уже занято.")
 
@@ -320,23 +330,23 @@ class MainApp: # Главный класс приложения
         name = self.entry_name.get().strip()
         code = self.entry_code.get().strip()
         
-        self.school_manager = SchoolManager(school)# Создаем менеджер для выбранной школы
-        student_data = self.school_manager.students.get(name) # Получаем данные студента по имени
+        self.school_manager = SchoolManager(school)# Создаем менеджер для выбранной школы и получаем данные студента по имени
+        student_data = self.school_manager.students.get(name) 
         
         if student_data and student_data["code"] == code: # проверяем что студент существует и код
             self.student = Student(name, code)
             self.student.grades = student_data.get("grades", {})
             messagebox.showinfo("Успех", "Вход выполнен.")
-            self.root.withdraw()#Закрывается окно с регистрацией/входом
-            self.open_portal()#Открывается главное окно  
+            self.root.withdraw()#Закрывается окно с регистрацией/входом и открывается главное окно 
+            self.open_portal()
         else:
             messagebox.showerror("Ошибка", "Неверные имя или код.")
 
 
-    # Открытие важной части с оценками, предметами и всем таким
+    
     def open_portal(self):
-        # Убираем удаление self.login_win, т.к. окна больше нет
-        # self.login_win.destroy()
+        '''Открытие важной части с оценками, предметами и всем таким'''
+
 
         # Открываем новое окно портала
         self.portal = tk.Toplevel(self.root)
@@ -361,18 +371,19 @@ class MainApp: # Главный класс приложения
         tk.Button(btn_frame, text="Посмотреть учеников", command=self.open_students_list).pack(side="left", padx=5)
 
         exit_btn = tk.Button(self.portal, text="Выход", command=self._on_portal_close)
-        exit_btn.pack(anchor="se", padx=10, pady=10)  # south-east: низ + право
+        exit_btn.pack(anchor="se", padx=10, pady=10)  # south-east: правый нижний угол (для тех кто не знает английского)
 
     def _on_portal_close(self):
-        self.portal.destroy()       # Закрываем окно портала
-        self.root.deiconify()       # Показываем окно входа заново
+        self.portal.destroy()       # Закрываем окно портала и показываем окно входа заново
+        self.root.deiconify()       
         
-    def open_students_list(self): # Метод для открытия окна со списком всех учеников школы
-        # Новое окно со списком учеников
+    def open_students_list(self):
+        '''Метод для открытия окна со списком всех учеников школы'''
+        
         self.students_win = tk.Toplevel(self.root)
         self.students_win.title(f"Ученики — {self.selected_school.get()}")
 
-        columns = ("name", "code")# Определяем колонки для таблицы (имя ученика и код)
+        columns = ("name", "code")
         tree = ttk.Treeview(self.students_win, columns=columns, show="headings")
         tree.heading("name", text="Имя ученика")
         tree.heading("code", text="Код")
@@ -383,18 +394,20 @@ class MainApp: # Главный класс приложения
         for name, data in self.school_manager.students.items():
             tree.insert("", "end", values=(name, data["code"]))# Добавляем строку с именем и кодом каждого ученика
 
-        # Привязываем двойной клик по строке к функции открытия деталей ученика
+        
         def on_student_double_click(event):
+            '''Привязываем двойной клик по строке к функции открытия деталей ученика'''
             selected = tree.focus()# Получаем выбранную строку
             if not selected:
                 return
             values = tree.item(selected, "values")# Получаем данные из выбранной строки
             self.open_student_details(values[0])  # Открываем детальную информацию об ученике (передаем имя)
 
-        tree.bind("<Double-1>", on_student_double_click) # Привязываем двойной клик мыши к обработчику
+        tree.bind("<Double-1>", on_student_double_click) 
 
 
-    def open_student_details(self, student_name):# Метод для открытия детальной информации об ученике
+    def open_student_details(self, student_name):
+        '''Метод для открытия детальной информации об ученике'''
         student_data = self.school_manager.students.get(student_name)
         # Получаем данные ученика по имени из school_manager
         if not student_data:
@@ -428,14 +441,14 @@ class MainApp: # Главный класс приложения
         for row in self.tree.get_children():
             self.tree.delete(row)# Удаляем все строки из таблицы
 
-        for subject, data in self.school_manager.subjects.items():# Для каждого предмета
-            teacher = data["teacher"]# Учитель предмета
-            if subject in self.student.grades:# Если есть оценки студента
-                t1, t2 = self.student.grades[subject]# Берем оценки за два теста
-                avg = math.floor((t1 + t2) / 2) # Вычисляем среднюю оценку (округление вниз)
+        for subject, data in self.school_manager.subjects.items():
+            teacher = data["teacher"]
+            if subject in self.student.grades:
+                t1, t2 = self.student.grades[subject]
+                avg = math.floor((t1 + t2) / 2) 
             else:
                 t1 = t2 = avg = "МА"# Если нет оценок, пишем "МА"
-            self.tree.insert("", "end", values=(subject, teacher, t1, t2, avg))  # Вставляем строку в таблицу
+            self.tree.insert("", "end", values=(subject, teacher, t1, t2, avg))  
 
 
     def pass_subject(self):
@@ -445,12 +458,12 @@ class MainApp: # Главный класс приложения
             return
 
         values = self.tree.item(selected, "values") # Получаем значения выбранной строки
-        subject = values[0] # Извлекаем название предмета
+        subject = values[0] 
         result = self.student.pass_subject(subject, self.school_manager.subjects[subject])
         if result:# Запускаем тесты по предмету
-            status = "СДАН" if sum(result)/2 > 2 else "НЕ СДАН" # Определяем статус сдачи по среднему баллу
-            messagebox.showinfo("Результат", f"{subject}: {result[0]}, {result[1]} → {math.floor(sum(result)/2)} ({status})")  # Показ результата
-            self.update_subject_table()# Обновляем таблицу оценок
+            status = "СДАН" if sum(result)/2 > 2 else "НЕ СДАН" 
+            messagebox.showinfo("Результат", f"{subject}: {result[0]}, {result[1]} → {math.floor(sum(result)/2)} ({status})")  
+            self.update_subject_table()
             self.school_manager.students[self.student.name]["grades"] = self.student.grades
             self.school_manager.save_students()
 
@@ -460,5 +473,3 @@ if __name__ == "__main__":
     root = tk.Tk()# Создаем главное окно приложения
     app = MainApp(root)# Создаем экземпляр приложения
     root.mainloop()# Запускаем цикл обработки событий tkinter
-
-
